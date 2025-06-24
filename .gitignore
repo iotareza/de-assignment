@@ -378,6 +378,7 @@ yarn-error.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+./spark-jars/
 
 # Project specific
-# Add any project-specific files or directories here 
+# Add any project-specific files or directories here spark-jars/aws-java-sdk-bundle-1.12.261.jar
