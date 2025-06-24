@@ -71,7 +71,7 @@ This project implements two comprehensive data pipelines using Apache Airflow, A
 
 ### 1. Clone and Setup
 ```bash
-git clone <repository-url>
+git clone git@github.com:iotareza/de-assignment.git
 cd de-assignment
 ```
 
