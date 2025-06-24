@@ -14,7 +14,6 @@ This project implements two comprehensive data pipelines using Apache Airflow, A
 - [MovieLens Analytics Pipeline](#movielens-analytics-pipeline)
 - [Connection Pool Management](#connection-pool-management)
 - [Pre-Extract Filter System](#pre-extract-filter-system)
-- [Three-Step Architecture](#three-step-architecture)
 - [Integration Testing](#integration-testing)
 - [Alerting System](#alerting-system)
 - [Monitoring and Troubleshooting](#monitoring-and-troubleshooting)
@@ -321,84 +320,6 @@ CREATE TABLE url_tracking (
 );
 ```
 
-### Usage
-
-```python
-from src.pre_extract_filter import PreExtractFilter
-
-# Initialize filter
-filter_obj = PreExtractFilter()
-
-# Filter URLs for HDFC
-urls = ["https://example.com/article1", "https://example.com/article2"]
-filtered_hdfc = filter_obj.filter_urls(urls, "HDFC")
-
-# Filter URLs for Tata Motors (same URLs, different stock)
-filtered_tata = filter_obj.filter_urls(urls, "Tata Motors")
-
-# Mark URL as processed for specific stock
-filter_obj.mark_url_as_processed("https://example.com/article1", "HDFC")
-```
-
-### Benefits
-
-- **Performance**: Fast O(k) lookup time per stock
-- **Accuracy**: No false negatives, low false positives
-- **Scalability**: Persistent storage, configurable size
-- **Multi-Stock Support**: Independent tracking per stock
-
-## Three-Step Architecture
-
-### Overview
-
-The news sentiment pipeline has been restructured into a **3-step extraction process** with advanced filtering and caching mechanisms for better separation of concerns, improved performance, and enhanced scalability.
-
-### Architecture Components
-
-#### Step 1: URL Collection (`src/url_collector.py`)
-- **Purpose**: Collect all relevant URLs for each stock from all sources
-- **Features**: Gathers URLs from all enabled sources, adds metadata
-- **Output**: JSON file with all collected URLs for each stock
-
-#### Step 2: PreExtractor Filter (`src/pre_extractor_filter.py`)
-- **Purpose**: Filter URLs using both database and Redis bloom filter
-- **Features**: Two-tier filtering, caching, stock-specific tracking
-- **Process**: Bloom filter check → Database check → Update filters
-
-#### Step 3: Content Extraction (`src/content_extractor.py`)
-- **Purpose**: Extract content from filtered URLs and mark as processed
-- **Features**: Rate limiting, stock-specific processing, database updates
-
-### Performance Benefits
-
-| Aspect | Before | After |
-|--------|--------|-------|
-| **URL Discovery** | Per-task | Once per stock |
-| **Filtering** | Per-URL | Batch processing |
-| **Caching** | None | Redis + Database |
-| **Parallelization** | Limited | Full parallel |
-| **Error Recovery** | Restart entire task | Resume from any step |
-
-### Airflow DAG Structure
-
-```
-URL Collection Tasks (Parallel)
-    ↓
-PreExtractor Filter Tasks (Parallel)
-    ↓
-Content Extraction Tasks (Parallel)
-    ↓
-Processing Tasks (Parallel)
-    ↓
-Sentiment Analysis Tasks (Parallel)
-    ↓
-Persistence Tasks (Parallel)
-    ↓
-Aggregation Task
-    ↓
-Notification Task
-```
-
 ## Integration Testing
 
 ### Overview
@@ -415,36 +336,8 @@ The integration test simulates the complete Airflow DAG pipeline by mocking Airf
 ### How to Run
 
 ```bash
-# Option 1: Direct Python Execution
-cd src
-python integration_test.py
-
-# Option 2: Using the Test Script
-python test_integration.py
+python -m src.integration_test.py
 ```
-
-### XCom Data Flow
-
-The pipeline uses the following XCom keys for communication:
-
-1. **extract_news_data** → **process_news_data**
-   - Key: `extracted_data_s3_key`
-   - Value: S3 key containing extracted articles
-
-2. **process_news_data** → **generate_sentiment_scores**
-   - Key: `processed_data_s3_key`
-   - Value: S3 key containing processed articles
-
-3. **generate_sentiment_scores** → **persist_sentiment_data**
-   - Key: `sentiment_data_s3_key`
-   - Value: S3 key containing sentiment analysis results
-
-### Benefits
-
-- **Fast Testing**: No need to start Airflow for testing
-- **Debugging**: Easy to trace data flow and identify issues
-- **Development**: Rapid iteration during development
-- **CI/CD**: Can be integrated into automated testing pipelines
 
 ## Alerting System
 
