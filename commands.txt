@@ -1,0 +1,10 @@
+  docker-compose exec -T airflow-scheduler airflow dags trigger news_sentiment_pipeline --exec-date 2025-06-24T10:21:00+00:00
+  docker-compose exec -T airflow-scheduler airflow dags trigger movielens_analytics_pipeline --exec-date 2025-06-24T10:23:00+00:00
+
+  docker-compose exec -T airflow-scheduler airflow dags delete movielens_analytics_pipeline --yes
+
+  docker-compose exec -T airflow-scheduler airflow dags list-runs --dag-id movielens_analytics_pipeline
+  docker-compose exec -T airflow-scheduler airflow tasks clear movielens_analytics_pipeline --yes
+  docker-compose exec -T airflow-scheduler airflow tasks list movielens_analytics_pipeline --tree
+
+  docker-compose exec -T airflow-scheduler airflow dags list

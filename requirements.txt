@@ -1,0 +1,43 @@
+# Core dependencies
+requests==2.31.0
+beautifulsoup4==4.12.2
+pandas==1.5.3
+numpy==1.24.3
+lxml==4.9.3
+
+# Database dependencies
+psycopg2-binary==2.9.7
+sqlalchemy==1.4.49
+
+# Redis for caching and bloom filters
+redis==3.5.3
+
+# Sentiment analysis
+textblob==0.17.1
+nltk==3.8.1
+
+# AWS S3
+boto3==1.34.0
+minio==7.2.0
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# Utilities
+tqdm==4.67.1
+joblib==1.5.1
+
+# PySpark
+pyspark==3.5.0
+
+# Airflow (for local development)
+apache-airflow-providers-postgres==5.7.1
+apache-airflow-providers-redis==3.0.0
+apache-airflow-providers-apache-spark==4.4.0
+
+# Development and testing
+pytest==7.4.3
+pytest-cov==4.1.0
+flake8==6.1.0
+black==23.12.1
+
